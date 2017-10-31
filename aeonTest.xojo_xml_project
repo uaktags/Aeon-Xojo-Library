@@ -1,0 +1,4479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RBProject version="2017r2.1" FormatVersion="2" MinIDEVersion="20070100">
+<block type="Project" ID="0">
+ <ProjectSavedInVers>2017.021</ProjectSavedInVers>
+ <MajorVersion>1</MajorVersion>
+ <MinorVersion>0</MinorVersion>
+ <SubVersion>0</SubVersion>
+ <Release>0</Release>
+ <NonRelease>0</NonRelease>
+ <Region></Region>
+ <ShortVersion></ShortVersion>
+ <LongVersion></LongVersion>
+ <InfoVersion></InfoVersion>
+ <AutoIncVersion>0</AutoIncVersion>
+ <DefaultViewID>1513072639</DefaultViewID>
+ <ProjectType>0</ProjectType>
+ <DefaultLanguage>0</DefaultLanguage>
+ <CurrentLanguage>0</CurrentLanguage>
+ <DefaultEncoding>0</DefaultEncoding>
+ <BuildFlags>26880</BuildFlags>
+ <UseBuildsFolder>1</UseBuildsFolder>
+ <WebApp>0</WebApp>
+ <Icon>
+ </Icon>
+ <MacCreator></MacCreator>
+ <BuildCarbonMachOName>aeonTest</BuildCarbonMachOName>
+ <BundleIdentifier>com.aioxperts.aeontest</BundleIdentifier>
+ <WinMDICaption></WinMDICaption>
+ <BuildWinName>aeonTest.exe</BuildWinName>
+ <BuildWinMDI>0</BuildWinMDI>
+ <BuildWinCompanyName>AIOXperts</BuildWinCompanyName>
+ <BuildWinProductName></BuildWinProductName>
+ <BuildWinInternalName></BuildWinInternalName>
+ <BuildWinFileDescription></BuildWinFileDescription>
+ <UseGDIPlus>0</UseGDIPlus>
+ <HiDPI>1</HiDPI>
+ <BuildLinuxX86Name>aeonTest</BuildLinuxX86Name>
+ <DebuggerCommandLine></DebuggerCommandLine>
+ <OptimizationLevel>0</OptimizationLevel>
+ <CopyWindowsRedist>0</CopyWindowsRedist>
+</block>
+<block type="Module" ID="888616959">
+ <ObjName>Task</ObjName>
+ <ObjContainerID>238610431</ObjContainerID>
+ <IsClass>1</IsClass>
+ <Superclass>Thread</Superclass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <HookInstance>
+  <ItemName>Run</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Run()</SourceLine>
+   <SourceLine>InternalPushEvent( New TaskEvent( TaskEvent.Types.Begin ) )</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Try</SourceLine>
+   <SourceLine>RaiseEvent Run</SourceLine>
+   <SourceLine>Catch exc As ThreadEndException</SourceLine>
+   <SourceLine>// FIXME: we probably want to make sure this isn't being sent because</SourceLine>
+   <SourceLine>// the app is quitting?</SourceLine>
+   <SourceLine>InternalPushEvent( New TaskEvent( TaskEvent.Types.Killed ) )</SourceLine>
+   <SourceLine>Raise exc</SourceLine>
+   <SourceLine>End Try</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>InternalPushEvent( New TaskEvent( TaskEvent.Types.Finished ) )</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+ </HookInstance>
+ <Method>
+  <ItemName>Constructor</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Constructor()</SourceLine>
+   <SourceLine>mLock = New CriticalSection</SourceLine>
+   <SourceLine>mTimer = New Timer</SourceLine>
+   <SourceLine>AddHandler mTimer.Action, WeakAddressOf InternalDispatchEvents</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>4096</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>InternalDispatchEvents</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub InternalDispatchEvents(sender as Timer)</SourceLine>
+   <SourceLine>// Takes the events in the queue and dispatches them to the correct event handler.</SourceLine>
+   <SourceLine>//</SourceLine>
+   <SourceLine>// NOTE: must be called from the main thread.</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>While True</SourceLine>
+   <SourceLine>Dim currentEvent As TaskEvent</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>mLock.Enter</SourceLine>
+   <SourceLine>If mEvents.UBound &gt;= 0 Then</SourceLine>
+   <SourceLine>currentEvent = mEvents( 0 )</SourceLine>
+   <SourceLine>mEvents.Remove( 0 )</SourceLine>
+   <SourceLine>Else</SourceLine>
+   <SourceLine>mLock.Leave</SourceLine>
+   <SourceLine>Exit Sub</SourceLine>
+   <SourceLine>End If</SourceLine>
+   <SourceLine>mLock.Leave</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Select Case currentEvent.type</SourceLine>
+   <SourceLine>Case TaskEvent.Types.Begin</SourceLine>
+   <SourceLine>RaiseEvent Begin</SourceLine>
+   <SourceLine>Case TaskEvent.Types.UpdateUI</SourceLine>
+   <SourceLine>RaiseEvent UpdateUI( currentEvent.Arguments )</SourceLine>
+   <SourceLine>Case TaskEvent.Types.Finished</SourceLine>
+   <SourceLine>RaiseEvent Finished</SourceLine>
+   <SourceLine>Case TaskEvent.Types.Killed</SourceLine>
+   <SourceLine>RaiseEvent Killed</SourceLine>
+   <SourceLine>End Select</SourceLine>
+   <SourceLine>Wend</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>sender as Timer</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>InternalPushEvent</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub InternalPushEvent(evt as TaskEvent)</SourceLine>
+   <SourceLine>// Adds an event to the event queue. This can be called from any thread, but is</SourceLine>
+   <SourceLine>// usually called from the non-main thread.</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>mLock.Enter</SourceLine>
+   <SourceLine>mEvents.Append( evt )</SourceLine>
+   <SourceLine>mTimer.Period = 0</SourceLine>
+   <SourceLine>mTimer.Mode = Timer.ModeSingle</SourceLine>
+   <SourceLine>mLock.Leave</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>evt as TaskEvent</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>UpdateUI</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub UpdateUI(args as Dictionary)</SourceLine>
+   <SourceLine>// Adds an UpdateUI event to the queue, which will eventually be dequeued</SourceLine>
+   <SourceLine>// on the main thread and raise the UpdateUI event.</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Dim evt As New TaskEvent( TaskEvent.Types.updateUI )</SourceLine>
+   <SourceLine>evt.Arguments = args</SourceLine>
+   <SourceLine>internalPushEvent( evt )</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>args as Dictionary</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>UpdateUI</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub UpdateUI(paramarray args as Pair)</SourceLine>
+   <SourceLine>// Adds an UpdateUI event to the queue, which will eventually be dequeued</SourceLine>
+   <SourceLine>// on the main thread and raise the UpdateUI event.</SourceLine>
+   <SourceLine>//</SourceLine>
+   <SourceLine>// This specific method is a convenience function in order to be able to</SourceLine>
+   <SourceLine>// use Pair literals. For example:</SourceLine>
+   <SourceLine>//   UpdateUI( "progress": 10, "total_progress": 100 )</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Dim d As New Dictionary</SourceLine>
+   <SourceLine>For Each arg As Pair In args</SourceLine>
+   <SourceLine>d.Value( arg.Left ) = arg.Right</SourceLine>
+   <SourceLine>Next</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>Self.UpdateUI( d )</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>paramarray args as Pair</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Hook>
+  <ItemName>Begin</ItemName>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemFlags>33</ItemFlags>
+  <SystemFlags>0</SystemFlags>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Hook>
+ <Hook>
+  <ItemName>Finished</ItemName>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemFlags>33</ItemFlags>
+  <SystemFlags>0</SystemFlags>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Hook>
+ <Hook>
+  <ItemName>Killed</ItemName>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemFlags>33</ItemFlags>
+  <SystemFlags>0</SystemFlags>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Hook>
+ <Hook>
+  <ItemName>Run</ItemName>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemFlags>33</ItemFlags>
+  <SystemFlags>0</SystemFlags>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Hook>
+ <Hook>
+  <ItemName>UpdateUI</ItemName>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemFlags>33</ItemFlags>
+  <SystemFlags>0</SystemFlags>
+  <ItemParams>args as Dictionary</ItemParams>
+  <ItemResult></ItemResult>
+ </Hook>
+ <Property>
+  <ItemName>mEvents()</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>mEvents() As TaskEvent</SourceLine>
+   <SourceLine>The queue of pending events. This is protected by mLock in order to provide</SourceLine>
+   <SourceLine>thread safety.</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>mEvents() As TaskEvent</ItemDeclaration>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>mLock</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>mLock As CriticalSection</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>mLock As CriticalSection</ItemDeclaration>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>mTimer</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>mTimer As Timer</SourceLine>
+   <SourceLine>This timer is used to punt events from the thread onto the main thread, where</SourceLine>
+   <SourceLine>InternalDispatchEvents will process all of the queued events.</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>mTimer As Timer</ItemDeclaration>
+  <ItemFlags>33</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>String</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>Integer</ItemType>
+   <EditorType>Integer</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>String</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Priority</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>5</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>StackSize</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+ </ViewBehavior>
+</block>
+<block type="Module" ID="344645631">
+ <ObjName>TaskEvent</ObjName>
+ <ObjContainerID>238610431</ObjContainerID>
+ <IsClass>1</IsClass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <Method>
+  <ItemName>Constructor</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Constructor(type as Types)</SourceLine>
+   <SourceLine>Self.Type = type</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>type as Types</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Property>
+  <ItemName>Arguments</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Arguments As Dictionary</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Arguments As Dictionary</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>Type</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Type As Types</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Type As Types</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>-2147483648</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Type</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <ItemType>Types</ItemType>
+   <EditorType>Enum</EditorType>
+   <Enumeration>
+    <ItemDef>0 - Begin</ItemDef>
+    <ItemDef>1 - Finished</ItemDef>
+    <ItemDef>2 - UpdateUI</ItemDef>
+    <ItemDef>3 - Killed</ItemDef>
+   </Enumeration>
+  </ViewProperty>
+ </ViewBehavior>
+ <Enumeration>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>Types</ItemName>
+  <ItemFlags>0</ItemFlags>
+  <ItemType>Integer</ItemType>
+  <ItemName>Types</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Begin</SourceLine>
+   <SourceLine>Finished</SourceLine>
+   <SourceLine>UpdateUI</SourceLine>
+   <SourceLine>Killed</SourceLine>
+  </ItemSource>
+ </Enumeration>
+</block>
+<block type="Module" ID="1712734207">
+ <ObjName>App</ObjName>
+ <ObjContainerID>0</ObjContainerID>
+ <IsClass>1</IsClass>
+ <Superclass>Application</Superclass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <IsApplicationObject>1</IsApplicationObject>
+ <Compatibility></Compatibility>
+ <Property>
+  <ItemName>aeond</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>aeond As String = "127.0.0.1"</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>aeond As String = "127.0.0.1"</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>aeondPort</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>aeondPort As string = "11180"</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>aeondPort As string = "11180"</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>wallet</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>wallet As String = "127.0.0.1"</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>wallet As String = "127.0.0.1"</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>walletPort</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>walletPort As String = "11182"</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>walletPort As String = "11182"</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <PropertyVal Name="MenuBar">1505716223</PropertyVal>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>aeond</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>127.0.0.1</PropertyValue>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>aeondPort</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>11180</PropertyValue>
+   <ItemType>string</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>wallet</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>127.0.0.1</PropertyValue>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>walletPort</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>11182</PropertyValue>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+ </ViewBehavior>
+ <Constant>
+  <ItemName>kFileQuitShortcut</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemType>0</ItemType>
+  <ItemDef></ItemDef>
+  <ItemFlags>0</ItemFlags>
+  <ConstantInstance>
+   <ItemPlatform>1</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>Cmd+Q</ItemDef>
+  </ConstantInstance>
+  <ConstantInstance>
+   <ItemPlatform>5</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>Ctrl+Q</ItemDef>
+  </ConstantInstance>
+ </Constant>
+ <Constant>
+  <ItemName>kFileQuit</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemType>0</ItemType>
+  <ItemDef>&amp;Quit</ItemDef>
+  <ItemFlags>0</ItemFlags>
+  <ConstantInstance>
+   <ItemPlatform>2</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>E&amp;xit</ItemDef>
+  </ConstantInstance>
+ </Constant>
+ <Constant>
+  <ItemName>kEditClear</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemType>0</ItemType>
+  <ItemDef>&amp;Delete</ItemDef>
+  <ItemFlags>0</ItemFlags>
+  <ConstantInstance>
+   <ItemPlatform>2</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>&amp;Delete</ItemDef>
+  </ConstantInstance>
+  <ConstantInstance>
+   <ItemPlatform>5</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>&amp;Delete</ItemDef>
+  </ConstantInstance>
+ </Constant>
+</block>
+<block type="Toolbar" ID="2009675775">
+ <ObjName>Toolbar1</ObjName>
+ <ObjContainerID>0</ObjContainerID>
+ <IsClass>1</IsClass>
+ <Superclass>Toolbar</Superclass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>String</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>Integer</ItemType>
+   <EditorType>Integer</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>String</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Width</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>100</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Height</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>32</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Visible</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Appearance</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Enabled</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Appearance</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>InitialParent</ObjName>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+ </ViewBehavior>
+ <ToolItem>
+  <Superclass>ToolButton</Superclass>
+  <ItemName>overviewBtn</ItemName>
+  <ItemText>Overview</ItemText>
+  <ItemHelp></ItemHelp>
+  <ItemStyle>2</ItemStyle>
+  <Enabled>1</Enabled>
+  <ItemFlags>0</ItemFlags>
+ </ToolItem>
+ <ToolItem>
+  <Superclass>ToolButton</Superclass>
+  <ItemName>ToolItem1</ItemName>
+  <ItemText>Untitled</ItemText>
+  <ItemHelp></ItemHelp>
+  <ItemStyle>1</ItemStyle>
+  <Enabled>1</Enabled>
+  <ItemFlags>0</ItemFlags>
+ </ToolItem>
+ <ToolItem>
+  <Superclass>ToolButton</Superclass>
+  <ItemName>sendcoinBtn</ItemName>
+  <ItemText>Send Coins</ItemText>
+  <ItemHelp></ItemHelp>
+  <ItemStyle>2</ItemStyle>
+  <Enabled>1</Enabled>
+  <ItemFlags>0</ItemFlags>
+ </ToolItem>
+ <ToolItem>
+  <Superclass>ToolButton</Superclass>
+  <ItemName>ToolItem2</ItemName>
+  <ItemText>Untitled</ItemText>
+  <ItemHelp></ItemHelp>
+  <ItemStyle>1</ItemStyle>
+  <Enabled>1</Enabled>
+  <ItemFlags>0</ItemFlags>
+ </ToolItem>
+ <ToolItem>
+  <Superclass>ToolButton</Superclass>
+  <ItemName>recBtn</ItemName>
+  <ItemText>Receive Coins</ItemText>
+  <ItemHelp></ItemHelp>
+  <ItemStyle>2</ItemStyle>
+  <Enabled>1</Enabled>
+  <ItemFlags>0</ItemFlags>
+ </ToolItem>
+ <ToolItem>
+  <Superclass>ToolButton</Superclass>
+  <ItemName>ToolItem4</ItemName>
+  <ItemText>Untitled</ItemText>
+  <ItemHelp></ItemHelp>
+  <ItemStyle>1</ItemStyle>
+  <Enabled>1</Enabled>
+  <ItemFlags>0</ItemFlags>
+ </ToolItem>
+ <ToolItem>
+  <Superclass>ToolButton</Superclass>
+  <ItemName>Txbtn</ItemName>
+  <ItemText>Transactions</ItemText>
+  <ItemHelp></ItemHelp>
+  <ItemStyle>2</ItemStyle>
+  <Enabled>1</Enabled>
+  <ItemFlags>0</ItemFlags>
+ </ToolItem>
+ <ToolItem>
+  <Superclass>ToolButton</Superclass>
+  <ItemName>ToolItem6</ItemName>
+  <ItemText>Untitled</ItemText>
+  <ItemHelp></ItemHelp>
+  <ItemStyle>1</ItemStyle>
+  <Enabled>1</Enabled>
+  <ItemFlags>0</ItemFlags>
+ </ToolItem>
+ <ToolItem>
+  <Superclass>ToolButton</Superclass>
+  <ItemName>addressBtn</ItemName>
+  <ItemText>Address Book</ItemText>
+  <ItemHelp></ItemHelp>
+  <ItemStyle>2</ItemStyle>
+  <Enabled>1</Enabled>
+  <ItemFlags>0</ItemFlags>
+ </ToolItem>
+ <ToolItem>
+  <Superclass>ToolButton</Superclass>
+  <ItemName>ToolItem3</ItemName>
+  <ItemText>Untitled</ItemText>
+  <ItemHelp></ItemHelp>
+  <ItemStyle>1</ItemStyle>
+  <Enabled>1</Enabled>
+  <ItemFlags>0</ItemFlags>
+ </ToolItem>
+ <ToolItem>
+  <Superclass>ToolButton</Superclass>
+  <ItemName>ToolItem5</ItemName>
+  <ItemText>Refresh</ItemText>
+  <ItemHelp></ItemHelp>
+  <ItemStyle>0</ItemStyle>
+  <Enabled>1</Enabled>
+  <ItemFlags>0</ItemFlags>
+ </ToolItem>
+</block>
+<block type="Window" ID="1310900223">
+ <ObjName>Window1</ObjName>
+ <ObjContainerID>0</ObjContainerID>
+ <IsClass>1</IsClass>
+ <Superclass>Window</Superclass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <HookInstance>
+  <ItemName>Close</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Close()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+ </HookInstance>
+ <HookInstance>
+  <ItemName>Open</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Open()</SourceLine>
+   <SourceLine>dim walletprocess as new Shell</SourceLine>
+   <SourceLine>walletprocess.Execute "C:\Users\uakta\Desktop\crypto-deamons\AEON-0.9.12.0-WIN64 - Copy\simplewallet.exe --rpc-bind-ip=0.0.0.0 --rpc-bind-port 18082 --password bootERS123!@# --wallet-file C:\Users\uakta\Desktop\crypto-deamons\AEON-0.9.12.0-WIN64 - Copy\uaktags-aeon"</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+ </HookInstance>
+ <Method>
+  <ItemName>refreshAll</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub refreshAll()</SourceLine>
+   <SourceLine>dim walletd as new wallet</SourceLine>
+   <SourceLine>msgbox walletd.getbalance</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <PropertyVal Name="MenuBarVisible">True</PropertyVal>
+ <PropertyVal Name="MenuBar">1505716223</PropertyVal>
+ <PropertyVal Name="Backdrop">0</PropertyVal>
+ <PropertyVal Name="BackColor">16777215</PropertyVal>
+ <PropertyVal Name="HasBackColor">False</PropertyVal>
+ <PropertyVal Name="FullScreen">False</PropertyVal>
+ <PropertyVal Name="LiveResize">True</PropertyVal>
+ <PropertyVal Name="Visible">True</PropertyVal>
+ <PropertyVal Name="Placement">0</PropertyVal>
+ <PropertyVal Name="ImplicitInstance">True</PropertyVal>
+ <PropertyVal Name="MacProcID">0</PropertyVal>
+ <PropertyVal Name="Composite">False</PropertyVal>
+ <PropertyVal Name="FullScreenButton">False</PropertyVal>
+ <PropertyVal Name="MinimizeButton">True</PropertyVal>
+ <PropertyVal Name="MaximizeButton">False</PropertyVal>
+ <PropertyVal Name="Resizeable">False</PropertyVal>
+ <PropertyVal Name="CloseButton">True</PropertyVal>
+ <PropertyVal Name="Title">Aeon-Wallet Test</PropertyVal>
+ <PropertyVal Name="Frame">9</PropertyVal>
+ <PropertyVal Name="MaxHeight">32000</PropertyVal>
+ <PropertyVal Name="MaxWidth">32000</PropertyVal>
+ <PropertyVal Name="MinHeight">64</PropertyVal>
+ <PropertyVal Name="MinWidth">64</PropertyVal>
+ <PropertyVal Name="Height">542</PropertyVal>
+ <PropertyVal Name="Width">720</PropertyVal>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>String</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Interfaces</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>String</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>String</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Width</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Size</PropertyGroup>
+   <PropertyValue>600</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Height</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Size</PropertyGroup>
+   <PropertyValue>400</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MinWidth</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Size</PropertyGroup>
+   <PropertyValue>64</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MinHeight</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Size</PropertyGroup>
+   <PropertyValue>64</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MaxWidth</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Size</PropertyGroup>
+   <PropertyValue>32000</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MaxHeight</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Size</PropertyGroup>
+   <PropertyValue>32000</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Frame</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Frame</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+   <EditorType>Enum</EditorType>
+   <Enumeration>
+    <ItemDef>0 - Document</ItemDef>
+    <ItemDef>1 - Movable Modal</ItemDef>
+    <ItemDef>2 - Modal Dialog</ItemDef>
+    <ItemDef>3 - Floating Window</ItemDef>
+    <ItemDef>4 - Plain Box</ItemDef>
+    <ItemDef>5 - Shadowed Box</ItemDef>
+    <ItemDef>6 - Rounded Window</ItemDef>
+    <ItemDef>7 - Global Floating Window</ItemDef>
+    <ItemDef>8 - Sheet Window</ItemDef>
+    <ItemDef>9 - Metal Window</ItemDef>
+    <ItemDef>11 - Modeless Dialog</ItemDef>
+   </Enumeration>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Title</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Frame</PropertyGroup>
+   <PropertyValue>Untitled</PropertyValue>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>CloseButton</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Frame</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Resizeable</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Frame</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MaximizeButton</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Frame</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MinimizeButton</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Frame</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>FullScreenButton</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Frame</PropertyGroup>
+   <PropertyValue>False</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Composite</ObjName>
+   <PropertyGroup>OS X (Carbon)</PropertyGroup>
+   <PropertyValue>False</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MacProcID</ObjName>
+   <PropertyGroup>OS X (Carbon)</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>ImplicitInstance</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Placement</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+   <EditorType>Enum</EditorType>
+   <Enumeration>
+    <ItemDef>0 - Default</ItemDef>
+    <ItemDef>1 - Parent Window</ItemDef>
+    <ItemDef>2 - Main Screen</ItemDef>
+    <ItemDef>3 - Parent Window Screen</ItemDef>
+    <ItemDef>4 - Stagger</ItemDef>
+   </Enumeration>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Visible</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>LiveResize</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>FullScreen</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>False</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>HasBackColor</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Background</PropertyGroup>
+   <PropertyValue>False</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>BackColor</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Background</PropertyGroup>
+   <PropertyValue>&amp;hFFFFFF</PropertyValue>
+   <ItemType>Color</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Backdrop</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Background</PropertyGroup>
+   <ItemType>Picture</ItemType>
+   <EditorType>Picture</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MenuBar</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Menus</PropertyGroup>
+   <ItemType>MenuBar</ItemType>
+   <EditorType>MenuBar</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MenuBarVisible</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Deprecated</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+ </ViewBehavior>
+ <ControlBehavior>
+  <Superclass>IPCSocket</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>TCPSocket</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Toolbar1</Superclass>
+  <HookInstance>
+   <ItemName>Action</ItemName>
+   <Compatibility></Compatibility>
+   <Visible>1</Visible>
+   <ItemSource>
+    <TextEncoding>134217984</TextEncoding>
+    <SourceLine>Sub Action(item As ToolItem)</SourceLine>
+    <SourceLine>Select case item.Caption</SourceLine>
+    <SourceLine>case "Overview"</SourceLine>
+    <SourceLine>ToolButton(me.sendcoinBtn).Pushed = false</SourceLine>
+    <SourceLine>ToolButton(me.addressBtn).Pushed = false</SourceLine>
+    <SourceLine>ToolButton(me.Txbtn).Pushed = false</SourceLine>
+    <SourceLine>ToolButton(me.recBtn).Pushed = false</SourceLine>
+    <SourceLine>PagePanel1.Value = 0</SourceLine>
+    <SourceLine>case "Send Coins"</SourceLine>
+    <SourceLine>ToolButton(me.overviewBtn).Pushed = false</SourceLine>
+    <SourceLine>ToolButton(me.addressBtn).Pushed = false</SourceLine>
+    <SourceLine>ToolButton(me.Txbtn).Pushed = false</SourceLine>
+    <SourceLine>ToolButton(me.recBtn).Pushed = false</SourceLine>
+    <SourceLine>PagePanel1.Value = 1</SourceLine>
+    <SourceLine>case "Receive Coins"</SourceLine>
+    <SourceLine>ToolButton(me.sendcoinBtn).Pushed = false</SourceLine>
+    <SourceLine>ToolButton(me.addressBtn).Pushed = false</SourceLine>
+    <SourceLine>ToolButton(me.Txbtn).Pushed = false</SourceLine>
+    <SourceLine>ToolButton(me.overviewBtn).Pushed = false</SourceLine>
+    <SourceLine>PagePanel1.Value = 2</SourceLine>
+    <SourceLine>case "Transactions"</SourceLine>
+    <SourceLine>ToolButton(me.sendcoinBtn).Pushed = false</SourceLine>
+    <SourceLine>ToolButton(me.addressBtn).Pushed = false</SourceLine>
+    <SourceLine>ToolButton(me.overviewBtn).Pushed = false</SourceLine>
+    <SourceLine>ToolButton(me.recBtn).Pushed = false</SourceLine>
+    <SourceLine>PagePanel1.Value = 3</SourceLine>
+    <SourceLine>case "Address Book"</SourceLine>
+    <SourceLine>ToolButton(me.sendcoinBtn).Pushed = false</SourceLine>
+    <SourceLine>ToolButton(me.overviewBtn).Pushed = false</SourceLine>
+    <SourceLine>ToolButton(me.Txbtn).Pushed = false</SourceLine>
+    <SourceLine>ToolButton(me.recBtn).Pushed = false</SourceLine>
+    <SourceLine>PagePanel1.Value = 4</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>case"Refresh"</SourceLine>
+    <SourceLine>refreshAllTask.Run</SourceLine>
+    <SourceLine>end select</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>End Sub</SourceLine>
+   </ItemSource>
+  </HookInstance>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>PagePanel</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Separator</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Separator</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Separator</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>TextArea</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>TextField</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Task</Superclass>
+  <HookInstance>
+   <ItemName>Run</ItemName>
+   <Compatibility></Compatibility>
+   <Visible>1</Visible>
+   <ItemSource>
+    <TextEncoding>134217984</TextEncoding>
+    <SourceLine>Sub Run()</SourceLine>
+    <SourceLine>Dim progressValue As Integer</SourceLine>
+    <SourceLine>dim balance as new JSONItem</SourceLine>
+    <SourceLine>dim address as new JSONItem</SourceLine>
+    <SourceLine>While progressValue &lt; 100</SourceLine>
+    <SourceLine>progressValue = progressValue + 1</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>// Do some long-running process</SourceLine>
+    <SourceLine>dim walletd as new wallet</SourceLine>
+    <SourceLine>walletd.address = app.wallet</SourceLine>
+    <SourceLine>walletd.port = app.walletPort</SourceLine>
+    <SourceLine>balance.load( walletd.getbalance)</SourceLine>
+    <SourceLine>address.load( walletd.getaddress)</SourceLine>
+    <SourceLine>// Call UpdateUI with any parameters you need. This calls the UpdateUI event handler</SourceLine>
+    <SourceLine>// where you can directly access any UI controls on the Window.</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>// This specifies simple parameters using a Pair</SourceLine>
+    <SourceLine>// You can also pass values using a Dictionary</SourceLine>
+    <SourceLine>Me.UpdateUI("UIProgress":progressValue)</SourceLine>
+    <SourceLine>Wend</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>me.UpdateUI("BalanceUpdate": balance.Value("result"))</SourceLine>
+    <SourceLine>me.UpdateUI("addressUpdate": address.value("result"))</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>End Sub</SourceLine>
+   </ItemSource>
+  </HookInstance>
+  <HookInstance>
+   <ItemName>UpdateUI</ItemName>
+   <Compatibility></Compatibility>
+   <Visible>1</Visible>
+   <ItemSource>
+    <TextEncoding>134217984</TextEncoding>
+    <SourceLine>Sub UpdateUI(args as Dictionary)</SourceLine>
+    <SourceLine>If args.HasKey("UIProgress") Then</SourceLine>
+    <SourceLine>progressbar1.Value = args.Value("UIProgress").IntegerValue</SourceLine>
+    <SourceLine>elseif args.HasKey("BalanceUpdate") then</SourceLine>
+    <SourceLine>dim res as new JSONItem</SourceLine>
+    <SourceLine>res = args.Value("BalanceUpdate")</SourceLine>
+    <SourceLine>dim bal as double</SourceLine>
+    <SourceLine>dim conv as string = "0.000000000001"</SourceLine>
+    <SourceLine>bal = (res.Value("balance").DoubleValue * conv.CDbl)</SourceLine>
+    <SourceLine>totalBal.text = str(bal)</SourceLine>
+    <SourceLine>unconfirmedBal.Text = str(res.Value("unlocked_balance").DoubleValue * conv.CDbl)</SourceLine>
+    <SourceLine>elseif args.HasKey("AddressUpdate") then</SourceLine>
+    <SourceLine>dim res as new JSONItem</SourceLine>
+    <SourceLine>res = args.Value("AddressUpdate")</SourceLine>
+    <SourceLine>addresslbl.Text = res.value("address")</SourceLine>
+    <SourceLine>End If</SourceLine>
+    <SourceLine>End Sub</SourceLine>
+   </ItemSource>
+  </HookInstance>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>ProgressBar</Superclass>
+ </ControlBehavior>
+ <Control>
+  <ControlClass>IPCSocket</ControlClass>
+  <ItemName>IPCSocket</ItemName>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="Path"></PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">IPCSocket</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">IPCSocket1</PropertyVal>
+  <ControlIndex>0</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>TCPSocket</ControlClass>
+  <ItemName>TCPSocket</ItemName>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="Port">0</PropertyVal>
+  <PropertyVal Name="Address"></PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">TCPSocket</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">TCPSocket1</PropertyVal>
+  <ControlIndex>1</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Toolbar1</ControlClass>
+  <ItemName>Toolbar1</ItemName>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="InitialParent"></PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Toolbar1</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Toolbar11</PropertyVal>
+  <ControlIndex>2</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>PagePanel</ControlClass>
+  <ItemName>PagePanel</ItemName>
+  <PropertyVal Name="InitialParent"></PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Value">0</PropertyVal>
+  <PropertyVal Name="Panels"></PropertyVal>
+  <PropertyVal Name="PanelCount">5</PropertyVal>
+  <PropertyVal Name="TabIndex">0</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">502</PropertyVal>
+  <PropertyVal Name="Width">680</PropertyVal>
+  <PropertyVal Name="Top">20</PropertyVal>
+  <PropertyVal Name="Left">20</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">PagePanel</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">PagePanel1</PropertyVal>
+  <ControlIndex>3</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">True</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">2.0e+1</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="Text">Balances</PropertyVal>
+  <PropertyVal Name="TabIndex">0</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">100</PropertyVal>
+  <PropertyVal Name="Top">49</PropertyVal>
+  <PropertyVal Name="Left">40</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Label1</PropertyVal>
+  <ControlIndex>4</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="Text">Available:</PropertyVal>
+  <PropertyVal Name="TabIndex">1</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">100</PropertyVal>
+  <PropertyVal Name="Top">81</PropertyVal>
+  <PropertyVal Name="Left">40</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Label2</PropertyVal>
+  <ControlIndex>5</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="Text">Unlocked Balance</PropertyVal>
+  <PropertyVal Name="TabIndex">2</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">100</PropertyVal>
+  <PropertyVal Name="Top">113</PropertyVal>
+  <PropertyVal Name="Left">40</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Label3</PropertyVal>
+  <ControlIndex>6</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Separator</ControlClass>
+  <ItemName>Separator</ItemName>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="TabIndex">3</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">4</PropertyVal>
+  <PropertyVal Name="Width">312</PropertyVal>
+  <PropertyVal Name="Top">145</PropertyVal>
+  <PropertyVal Name="Left">40</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Separator</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Separator1</PropertyVal>
+  <ControlIndex>7</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="Text">Total:</PropertyVal>
+  <PropertyVal Name="TabIndex">4</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">100</PropertyVal>
+  <PropertyVal Name="Top">161</PropertyVal>
+  <PropertyVal Name="Left">40</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Label4</PropertyVal>
+  <ControlIndex>8</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="Text">Number of transactions:</PropertyVal>
+  <PropertyVal Name="TabIndex">5</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">100</PropertyVal>
+  <PropertyVal Name="Top">193</PropertyVal>
+  <PropertyVal Name="Left">40</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Label5</PropertyVal>
+  <ControlIndex>9</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Separator</ControlClass>
+  <ItemName>Separator</ItemName>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="TabIndex">6</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">7</PropertyVal>
+  <PropertyVal Name="Width">640</PropertyVal>
+  <PropertyVal Name="Top">273</PropertyVal>
+  <PropertyVal Name="Left">40</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Separator</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Separator2</PropertyVal>
+  <ControlIndex>10</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">2</PropertyVal>
+  <PropertyVal Name="Text">0</PropertyVal>
+  <PropertyVal Name="TabIndex">7</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">145</PropertyVal>
+  <PropertyVal Name="Top">81</PropertyVal>
+  <PropertyVal Name="Left">164</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">availBal</PropertyVal>
+  <ControlIndex>11</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="Text">AEON</PropertyVal>
+  <PropertyVal Name="TabIndex">8</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">39</PropertyVal>
+  <PropertyVal Name="Top">81</PropertyVal>
+  <PropertyVal Name="Left">313</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Label7</PropertyVal>
+  <ControlIndex>12</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">2</PropertyVal>
+  <PropertyVal Name="Text">0</PropertyVal>
+  <PropertyVal Name="TabIndex">9</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">145</PropertyVal>
+  <PropertyVal Name="Top">113</PropertyVal>
+  <PropertyVal Name="Left">164</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">unconfirmedBal</PropertyVal>
+  <ControlIndex>13</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="Text">AEON</PropertyVal>
+  <PropertyVal Name="TabIndex">10</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">39</PropertyVal>
+  <PropertyVal Name="Top">113</PropertyVal>
+  <PropertyVal Name="Left">313</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Label9</PropertyVal>
+  <ControlIndex>14</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">2</PropertyVal>
+  <PropertyVal Name="Text">0</PropertyVal>
+  <PropertyVal Name="TabIndex">11</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">145</PropertyVal>
+  <PropertyVal Name="Top">161</PropertyVal>
+  <PropertyVal Name="Left">164</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">totalBal</PropertyVal>
+  <ControlIndex>15</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="Text">AEON</PropertyVal>
+  <PropertyVal Name="TabIndex">12</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">39</PropertyVal>
+  <PropertyVal Name="Top">161</PropertyVal>
+  <PropertyVal Name="Left">313</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Label10</PropertyVal>
+  <ControlIndex>16</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">1</PropertyVal>
+  <PropertyVal Name="Text">0</PropertyVal>
+  <PropertyVal Name="TabIndex">13</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">55</PropertyVal>
+  <PropertyVal Name="Top">193</PropertyVal>
+  <PropertyVal Name="Left">225</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">txCount</PropertyVal>
+  <ControlIndex>17</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Separator</ControlClass>
+  <ItemName>Separator</ItemName>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="TabIndex">14</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">212</PropertyVal>
+  <PropertyVal Name="Width">65</PropertyVal>
+  <PropertyVal Name="Top">49</PropertyVal>
+  <PropertyVal Name="Left">328</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Separator</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Separator3</PropertyVal>
+  <ControlIndex>18</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">1.1e+1</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">True</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">1</PropertyVal>
+  <PropertyVal Name="Text"></PropertyVal>
+  <PropertyVal Name="TabIndex">15</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">17</PropertyVal>
+  <PropertyVal Name="Width">640</PropertyVal>
+  <PropertyVal Name="Top">20</PropertyVal>
+  <PropertyVal Name="Left">40</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">addresslbl</PropertyVal>
+  <ControlIndex>19</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>TextArea</ControlClass>
+  <ItemName>TextArea</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="AutomaticallyCheckSpelling">True</PropertyVal>
+  <PropertyVal Name="Alignment">0</PropertyVal>
+  <PropertyVal Name="AcceptTabs">False</PropertyVal>
+  <PropertyVal Name="LimitText">0</PropertyVal>
+  <PropertyVal Name="ReadOnly">False</PropertyVal>
+  <PropertyVal Name="Mask"></PropertyVal>
+  <PropertyVal Name="Text"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="LineSpacing">1.00</PropertyVal>
+  <PropertyVal Name="LineHeight">0.00</PropertyVal>
+  <PropertyVal Name="HideSelection">True</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Format"></PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="BackColor">16777215</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="UseFocusRing">True</PropertyVal>
+  <PropertyVal Name="Styled">True</PropertyVal>
+  <PropertyVal Name="ScrollbarVertical">True</PropertyVal>
+  <PropertyVal Name="ScrollbarHorizontal">False</PropertyVal>
+  <PropertyVal Name="Multiline">True</PropertyVal>
+  <PropertyVal Name="Border">True</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="TabIndex">16</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">181</PropertyVal>
+  <PropertyVal Name="Width">297</PropertyVal>
+  <PropertyVal Name="Top">80</PropertyVal>
+  <PropertyVal Name="Left">375</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">TextArea</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">TextArea1</PropertyVal>
+  <ControlIndex>20</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">True</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">2.0e+1</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="Text">Transfers</PropertyVal>
+  <PropertyVal Name="TabIndex">17</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">100</PropertyVal>
+  <PropertyVal Name="Top">49</PropertyVal>
+  <PropertyVal Name="Left">375</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Label11</PropertyVal>
+  <ControlIndex>21</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">1</PropertyVal>
+  <PropertyVal Name="Text">Send Coins Coming Soon</PropertyVal>
+  <PropertyVal Name="TabIndex">0</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">2</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">100</PropertyVal>
+  <PropertyVal Name="Top">261</PropertyVal>
+  <PropertyVal Name="Left">310</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Label12</PropertyVal>
+  <ControlIndex>22</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">1</PropertyVal>
+  <PropertyVal Name="Text">Recieve Coins coming soon</PropertyVal>
+  <PropertyVal Name="TabIndex">0</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">3</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">100</PropertyVal>
+  <PropertyVal Name="Top">261</PropertyVal>
+  <PropertyVal Name="Left">310</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Label13</PropertyVal>
+  <ControlIndex>23</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">True</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">1</PropertyVal>
+  <PropertyVal Name="Text"><Hex bytes="89">5472616E73616374696F6E7320686F706566756C6C7920636F6D696E6720736F6F6E0D0A53696D706C6557616C6C657420646F65736E277420686176652061206765745F7472616E73616374696F6E7320617267756D656E74</Hex></PropertyVal>
+  <PropertyVal Name="TabIndex">0</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">4</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">219</PropertyVal>
+  <PropertyVal Name="Top">261</PropertyVal>
+  <PropertyVal Name="Left">251</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Label14</PropertyVal>
+  <ControlIndex>24</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">1</PropertyVal>
+  <PropertyVal Name="Text">Address Book coming soon</PropertyVal>
+  <PropertyVal Name="TabIndex">0</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">5</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">100</PropertyVal>
+  <PropertyVal Name="Top">261</PropertyVal>
+  <PropertyVal Name="Left">310</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Label15</PropertyVal>
+  <ControlIndex>25</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">True</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="Text"><Hex bytes="411">41656F6E2D57616C6C65742054657374206275696C742062792054696D206F662041494F587065727473202875616B74616773290D0A54686973207465737420697320746F2064656D6F20746865206372656174696F6E206F6620612041454F4E2F4D6F6E65726F206C69627261727920666F7220586F6A6F2F5265616C42617369632E2054686520676F616C20697320746F2066696E697368207468652061706920696E746567726174696F6E20616E64207468656E206275696C6420612066756E6374696F6E616C204755492077616C6C657420746861742063616E2062652075736564206F6E20616C6C206F7065726174696E672073797374656D7320737570706F7274656420627920586F6A6F2E20586F6A6F206973206120706572666563742066697420666F722074686973206B696E64206F662070726F6A656374206173206974277320612073696E676C6520636F6465626173652C206E617469766520636F6D70696C6174696F6E2C20616E64206E6F206E65656420666F722065787465726E616C204A564D73206F7220746865206C696B652E</Hex></PropertyVal>
+  <PropertyVal Name="TabIndex">18</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">81</PropertyVal>
+  <PropertyVal Name="Width">640</PropertyVal>
+  <PropertyVal Name="Top">334</PropertyVal>
+  <PropertyVal Name="Left">40</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Label16</PropertyVal>
+  <ControlIndex>26</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="Text">Donate AEON:</PropertyVal>
+  <PropertyVal Name="TabIndex">19</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">100</PropertyVal>
+  <PropertyVal Name="Top">410</PropertyVal>
+  <PropertyVal Name="Left">40</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">Label17</PropertyVal>
+  <ControlIndex>27</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>TextField</ControlClass>
+  <ItemName>TextField</ItemName>
+  <PropertyVal Name="InitialParent">PagePanel1</PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="AutomaticallyCheckSpelling">False</PropertyVal>
+  <PropertyVal Name="Alignment">0</PropertyVal>
+  <PropertyVal Name="AcceptTabs">False</PropertyVal>
+  <PropertyVal Name="LimitText">0</PropertyVal>
+  <PropertyVal Name="ReadOnly">True</PropertyVal>
+  <PropertyVal Name="Mask"></PropertyVal>
+  <PropertyVal Name="Text">WmsmnmjLmJpbV9yhzx77zv2DmqTmC5BaM9PmULCNWozNSCtH29vpYddTJfHgNoaxRfeZAeC3Y6FXy8YVdvoNKKYM2vsajHSs4</PropertyVal>
+  <PropertyVal Name="CueText"></PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="TextSize">0.0e+</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Format"></PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="BackColor">12632256</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="UseFocusRing">True</PropertyVal>
+  <PropertyVal Name="Password">False</PropertyVal>
+  <PropertyVal Name="Border">True</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="TabIndex">20</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">1</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">22</PropertyVal>
+  <PropertyVal Name="Width">539</PropertyVal>
+  <PropertyVal Name="Top">409</PropertyVal>
+  <PropertyVal Name="Left">133</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">TextField</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">TextField1</PropertyVal>
+  <ControlIndex>28</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Task</ControlClass>
+  <ItemName>Task</ItemName>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="StackSize">0</PropertyVal>
+  <PropertyVal Name="Priority">5</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">Task</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">refreshAllTask</PropertyVal>
+  <ControlIndex>29</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>ProgressBar</ControlClass>
+  <ItemName>ProgressBar</ItemName>
+  <PropertyVal Name="InitialParent"></PropertyVal>
+  <PropertyVal Name="Maximum">100</PropertyVal>
+  <PropertyVal Name="Value">0</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="TabIndex">1</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="Width">680</PropertyVal>
+  <PropertyVal Name="Top">522</PropertyVal>
+  <PropertyVal Name="Left">20</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Super">ProgressBar</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Name">ProgressBar1</PropertyVal>
+  <ControlIndex>30</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+</block>
+<block type="Menu" ID="1505716223">
+ <ObjName>MainMenuBar</ObjName>
+ <ObjContainerID>0</ObjContainerID>
+ <MenuItem>
+  <ItemSpecialMenu>0</ItemSpecialMenu>
+  <ItemName>FileMenu</ItemName>
+  <ItemText>&amp;File</ItemText>
+  <ItemIndex>-2147483648</ItemIndex>
+  <ItemShortcut></ItemShortcut>
+  <MenuAutoEnable>1</MenuAutoEnable>
+  <TextEncoding>134217984</TextEncoding>
+  <MenuItemVisible>1</MenuItemVisible>
+  <ItemFlags>0</ItemFlags>
+  <Superclass>MenuItem</Superclass>
+  <MenuItem>
+   <ItemSpecialMenu>0</ItemSpecialMenu>
+   <ItemName>FileQuit</ItemName>
+   <ItemText>#App.kFileQuit</ItemText>
+   <ItemIndex>-2147483648</ItemIndex>
+   <ItemShortcut>#App.kFileQuitShortcut</ItemShortcut>
+   <MenuShortcut>#App.kFileQuitShortcut</MenuShortcut>
+   <MenuAutoEnable>1</MenuAutoEnable>
+   <TextEncoding>134217984</TextEncoding>
+   <MenuItemVisible>1</MenuItemVisible>
+   <ItemFlags>0</ItemFlags>
+   <Superclass>QuitMenuItem</Superclass>
+  </MenuItem>
+ </MenuItem>
+ <MenuItem>
+  <ItemSpecialMenu>0</ItemSpecialMenu>
+  <ItemName>EditMenu</ItemName>
+  <ItemText>&amp;Edit</ItemText>
+  <ItemIndex>-2147483648</ItemIndex>
+  <ItemShortcut></ItemShortcut>
+  <MenuAutoEnable>1</MenuAutoEnable>
+  <TextEncoding>134217984</TextEncoding>
+  <MenuItemVisible>1</MenuItemVisible>
+  <ItemFlags>0</ItemFlags>
+  <Superclass>MenuItem</Superclass>
+  <MenuItem>
+   <ItemSpecialMenu>0</ItemSpecialMenu>
+   <ItemName>EditUndo</ItemName>
+   <ItemText>&amp;Undo</ItemText>
+   <ItemIndex>-2147483648</ItemIndex>
+   <ItemShortcut>Cmd+Z</ItemShortcut>
+   <MenuShortcut>Z</MenuShortcut>
+   <MenuShortcutModifier>1</MenuShortcutModifier>
+   <MenuAutoEnable>1</MenuAutoEnable>
+   <TextEncoding>134217984</TextEncoding>
+   <MenuItemVisible>1</MenuItemVisible>
+   <ItemFlags>0</ItemFlags>
+   <Superclass>MenuItem</Superclass>
+  </MenuItem>
+  <MenuItem>
+   <ItemSpecialMenu>0</ItemSpecialMenu>
+   <ItemName>EditSeparator1</ItemName>
+   <ItemText>-</ItemText>
+   <ItemIndex>-2147483648</ItemIndex>
+   <ItemShortcut></ItemShortcut>
+   <MenuAutoEnable>1</MenuAutoEnable>
+   <TextEncoding>134217984</TextEncoding>
+   <MenuItemVisible>1</MenuItemVisible>
+   <ItemFlags>0</ItemFlags>
+   <Superclass>MenuItem</Superclass>
+  </MenuItem>
+  <MenuItem>
+   <ItemSpecialMenu>0</ItemSpecialMenu>
+   <ItemName>EditCut</ItemName>
+   <ItemText>Cu&amp;t</ItemText>
+   <ItemIndex>-2147483648</ItemIndex>
+   <ItemShortcut>Cmd+X</ItemShortcut>
+   <MenuShortcut>X</MenuShortcut>
+   <MenuShortcutModifier>1</MenuShortcutModifier>
+   <MenuAutoEnable>1</MenuAutoEnable>
+   <TextEncoding>134217984</TextEncoding>
+   <MenuItemVisible>1</MenuItemVisible>
+   <ItemFlags>0</ItemFlags>
+   <Superclass>MenuItem</Superclass>
+  </MenuItem>
+  <MenuItem>
+   <ItemSpecialMenu>0</ItemSpecialMenu>
+   <ItemName>EditCopy</ItemName>
+   <ItemText>&amp;Copy</ItemText>
+   <ItemIndex>-2147483648</ItemIndex>
+   <ItemShortcut>Cmd+C</ItemShortcut>
+   <MenuShortcut>C</MenuShortcut>
+   <MenuShortcutModifier>1</MenuShortcutModifier>
+   <MenuAutoEnable>1</MenuAutoEnable>
+   <TextEncoding>134217984</TextEncoding>
+   <MenuItemVisible>1</MenuItemVisible>
+   <ItemFlags>0</ItemFlags>
+   <Superclass>MenuItem</Superclass>
+  </MenuItem>
+  <MenuItem>
+   <ItemSpecialMenu>0</ItemSpecialMenu>
+   <ItemName>EditPaste</ItemName>
+   <ItemText>&amp;Paste</ItemText>
+   <ItemIndex>-2147483648</ItemIndex>
+   <ItemShortcut>Cmd+V</ItemShortcut>
+   <MenuShortcut>V</MenuShortcut>
+   <MenuShortcutModifier>1</MenuShortcutModifier>
+   <MenuAutoEnable>1</MenuAutoEnable>
+   <TextEncoding>134217984</TextEncoding>
+   <MenuItemVisible>1</MenuItemVisible>
+   <ItemFlags>0</ItemFlags>
+   <Superclass>MenuItem</Superclass>
+  </MenuItem>
+  <MenuItem>
+   <ItemSpecialMenu>0</ItemSpecialMenu>
+   <ItemName>EditClear</ItemName>
+   <ItemText>#App.kEditClear</ItemText>
+   <ItemIndex>-2147483648</ItemIndex>
+   <ItemShortcut></ItemShortcut>
+   <MenuAutoEnable>1</MenuAutoEnable>
+   <TextEncoding>134217984</TextEncoding>
+   <MenuItemVisible>1</MenuItemVisible>
+   <ItemFlags>0</ItemFlags>
+   <Superclass>MenuItem</Superclass>
+  </MenuItem>
+  <MenuItem>
+   <ItemSpecialMenu>0</ItemSpecialMenu>
+   <ItemName>EditSeparator2</ItemName>
+   <ItemText>-</ItemText>
+   <ItemIndex>-2147483648</ItemIndex>
+   <ItemShortcut></ItemShortcut>
+   <MenuAutoEnable>1</MenuAutoEnable>
+   <TextEncoding>134217984</TextEncoding>
+   <MenuItemVisible>1</MenuItemVisible>
+   <ItemFlags>0</ItemFlags>
+   <Superclass>MenuItem</Superclass>
+  </MenuItem>
+  <MenuItem>
+   <ItemSpecialMenu>0</ItemSpecialMenu>
+   <ItemName>EditSelectAll</ItemName>
+   <ItemText>Select &amp;All</ItemText>
+   <ItemIndex>-2147483648</ItemIndex>
+   <ItemShortcut>Cmd+A</ItemShortcut>
+   <MenuShortcut>A</MenuShortcut>
+   <MenuShortcutModifier>1</MenuShortcutModifier>
+   <MenuAutoEnable>1</MenuAutoEnable>
+   <TextEncoding>134217984</TextEncoding>
+   <MenuItemVisible>1</MenuItemVisible>
+   <ItemFlags>0</ItemFlags>
+   <Superclass>MenuItem</Superclass>
+  </MenuItem>
+ </MenuItem>
+</block>
+<block type="BuildAutomation" ID="106418175">
+ <ObjName>Build Automation</ObjName>
+ <ObjContainerID>0</ObjContainerID>
+</block>
+<block type="BuildStepsList" ID="250331135">
+ <ObjName>Linux</ObjName>
+ <ObjContainerID>106418175</ObjContainerID>
+</block>
+<block type="Folder" ID="238610431">
+ <ObjName>Task</ObjName>
+ <ObjContainerID>0</ObjContainerID>
+</block>
+<block type="BuildProjectStep" ID="1354921983">
+ <ObjName>Build</ObjName>
+ <ObjContainerID>250331135</ObjContainerID>
+</block>
+<block type="BuildStepsList" ID="1675157503">
+ <ObjName>Mac OS X</ObjName>
+ <ObjContainerID>106418175</ObjContainerID>
+</block>
+<block type="BuildProjectStep" ID="1288146943">
+ <ObjName>Build</ObjName>
+ <ObjContainerID>1675157503</ObjContainerID>
+</block>
+<block type="BuildStepsList" ID="23463935">
+ <ObjName>Windows</ObjName>
+ <ObjContainerID>106418175</ObjContainerID>
+</block>
+<block type="BuildProjectStep" ID="1295785983">
+ <ObjName>Build</ObjName>
+ <ObjContainerID>23463935</ObjContainerID>
+</block>
+<block type="Module" ID="1102202879">
+ <ObjName>wallet</ObjName>
+ <ObjContainerID>0</ObjContainerID>
+ <IsClass>1</IsClass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <Method>
+  <ItemName>getbalance</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function getbalance() As string</SourceLine>
+   <SourceLine>dim opts as new Dictionary</SourceLine>
+   <SourceLine>opts.Value("method") = "getbalance"</SourceLine>
+   <SourceLine>return sendpost(opts)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>getaddress</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function getaddress() As string</SourceLine>
+   <SourceLine>dim opts as new Dictionary</SourceLine>
+   <SourceLine>opts.Value("method") = "getaddress"</SourceLine>
+   <SourceLine>return sendpost(opts)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>getheight</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function getheight() As string</SourceLine>
+   <SourceLine>dim opts as new Dictionary</SourceLine>
+   <SourceLine>opts.Value("method") = "getheight"</SourceLine>
+   <SourceLine>return sendpost(opts)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>transfer</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub transfer()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>transfer_split</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub transfer_split()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>sweep_dust</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub sweep_dust()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>sweep_all</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub sweep_all()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>store</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub store()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>get_payments</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub get_payments()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>get_bulk_payments</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub get_bulk_payments()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>get_transfers</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub get_transfers()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>get_transfer_by_txid</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub get_transfer_by_txid()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>incoming_transfers</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub incoming_transfers()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>query_key</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub query_key()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>make_integrated_address</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub make_integrated_address()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>split_integrated_address</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub split_integrated_address()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>stop_wallet</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub stop_wallet()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>make_uri</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub make_uri()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>parse_uri</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub parse_uri()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>rescan_blockchain</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub rescan_blockchain()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>set_tx_notes</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub set_tx_notes()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>get_tx_notes</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub get_tx_notes()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>sign</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub sign()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>verify</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub verify()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>export_key_images</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub export_key_images()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>import_key_images</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub import_key_images()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>get_address_book</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub get_address_book()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>add_address_book</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function add_address_book() As string</SourceLine>
+   <SourceLine>dim opts as Dictionary</SourceLine>
+   <SourceLine>opts.value("method") = "add_address_book"</SourceLine>
+   <SourceLine>return sendpost(opts)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>rescan_spent</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub rescan_spent()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>create_wallet</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub create_wallet()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>open_wallet</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub open_wallet()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>sendpost</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function sendpost(opts as Dictionary) As string</SourceLine>
+   <SourceLine>dim sock as new HTTPSocket</SourceLine>
+   <SourceLine>dim json as new JSONItem</SourceLine>
+   <SourceLine>opts.Value("jsonrpc") = "2.0"</SourceLine>
+   <SourceLine>opts.value("id") = "0"</SourceLine>
+   <SourceLine>json = opts</SourceLine>
+   <SourceLine>sock.SetRequestContent(json.ToString, "application/json")</SourceLine>
+   <SourceLine>return sock.Post("http://" + me.address + ":" + me.port +"/json_rpc", 15)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>opts as Dictionary</ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Property>
+  <ItemName>address</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>address As String = "localhost"</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>address As String = "localhost"</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>port</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>port As string = "11183"</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>port As string = "11183"</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>-2147483648</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>address</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>localhost</PropertyValue>
+   <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>port</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>11182</PropertyValue>
+   <ItemType>string</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
+  </ViewProperty>
+ </ViewBehavior>
+</block>
+<block type="Module" ID="933447679">
+ <ObjName>aeon</ObjName>
+ <ObjContainerID>0</ObjContainerID>
+ <IsClass>1</IsClass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <Method>
+  <ItemName>getblockcount</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function getblockcount() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>on_getblockhash</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function on_getblockhash() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>getblocktemplate</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function getblocktemplate() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>submitblock</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function submitblock() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>getlastblockheader</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function getlastblockheader() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>getblockheaderbyhash</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function getblockheaderbyhash() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>getblockheaderbyheight</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function getblockheaderbyheight() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>getblock</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function getblock() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>get_connections</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function get_connections() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>get_info</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function get_info() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>hard_fork_info</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function hard_fork_info() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>setbans</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function setbans() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>getbans</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function getbans() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>getheight</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function getheight() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>gettransactions</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function gettransactions() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>is_key_image_spent</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function is_key_image_spent() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>sendrawtransaction</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function sendrawtransaction() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>get_transaction_pool</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function get_transaction_pool() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>stop_daemon</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function stop_daemon() As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams></ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>post</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function post(opts as Dictionary) As string</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+  <ItemParams>opts as Dictionary</ItemParams>
+  <ItemResult>string</ItemResult>
+ </Method>
+ <Property>
+  <ItemName>port</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>port As Integer = 11181</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>port As Integer = 11181</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <Property>
+  <ItemName>address</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>address As String = "127.0.0.1"</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>address As String = "127.0.0.1"</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <IsShared>0</IsShared>
+ </Property>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>-2147483648</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>port</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>11181</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>address</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>127.0.0.1</PropertyValue>
+   <ItemType>String</ItemType>
+   <EditorType>MultiLineEditor</EditorType>
+  </ViewProperty>
+ </ViewBehavior>
+</block>
+<block type="Window" ID="1513072639">
+ <ObjName>Window2</ObjName>
+ <ObjContainerID>0</ObjContainerID>
+ <IsClass>1</IsClass>
+ <Superclass>Window</Superclass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <PropertyVal Name="MenuBarVisible">True</PropertyVal>
+ <PropertyVal Name="MenuBar">0</PropertyVal>
+ <PropertyVal Name="Backdrop">0</PropertyVal>
+ <PropertyVal Name="BackColor">16777215</PropertyVal>
+ <PropertyVal Name="HasBackColor">False</PropertyVal>
+ <PropertyVal Name="FullScreen">False</PropertyVal>
+ <PropertyVal Name="LiveResize">True</PropertyVal>
+ <PropertyVal Name="Visible">True</PropertyVal>
+ <PropertyVal Name="Placement">0</PropertyVal>
+ <PropertyVal Name="ImplicitInstance">True</PropertyVal>
+ <PropertyVal Name="MacProcID">0</PropertyVal>
+ <PropertyVal Name="Composite">False</PropertyVal>
+ <PropertyVal Name="FullScreenButton">False</PropertyVal>
+ <PropertyVal Name="MinimizeButton">False</PropertyVal>
+ <PropertyVal Name="MaximizeButton">False</PropertyVal>
+ <PropertyVal Name="Resizeable">False</PropertyVal>
+ <PropertyVal Name="CloseButton">True</PropertyVal>
+ <PropertyVal Name="Title">Configuration</PropertyVal>
+ <PropertyVal Name="Frame">0</PropertyVal>
+ <PropertyVal Name="MaxHeight">32000</PropertyVal>
+ <PropertyVal Name="MaxWidth">32000</PropertyVal>
+ <PropertyVal Name="MinHeight">64</PropertyVal>
+ <PropertyVal Name="MinWidth">64</PropertyVal>
+ <PropertyVal Name="Height">318</PropertyVal>
+ <PropertyVal Name="Width">530</PropertyVal>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>String</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Interfaces</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>String</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <ItemType>String</ItemType>
+   <EditorType>String</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Width</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Size</PropertyGroup>
+   <PropertyValue>600</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Height</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Size</PropertyGroup>
+   <PropertyValue>400</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MinWidth</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Size</PropertyGroup>
+   <PropertyValue>64</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MinHeight</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Size</PropertyGroup>
+   <PropertyValue>64</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MaxWidth</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Size</PropertyGroup>
+   <PropertyValue>32000</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MaxHeight</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Size</PropertyGroup>
+   <PropertyValue>32000</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Frame</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Frame</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+   <EditorType>Enum</EditorType>
+   <Enumeration>
+    <ItemDef>0 - Document</ItemDef>
+    <ItemDef>1 - Movable Modal</ItemDef>
+    <ItemDef>2 - Modal Dialog</ItemDef>
+    <ItemDef>3 - Floating Window</ItemDef>
+    <ItemDef>4 - Plain Box</ItemDef>
+    <ItemDef>5 - Shadowed Box</ItemDef>
+    <ItemDef>6 - Rounded Window</ItemDef>
+    <ItemDef>7 - Global Floating Window</ItemDef>
+    <ItemDef>8 - Sheet Window</ItemDef>
+    <ItemDef>9 - Metal Window</ItemDef>
+    <ItemDef>11 - Modeless Dialog</ItemDef>
+   </Enumeration>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Title</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Frame</PropertyGroup>
+   <PropertyValue>Untitled</PropertyValue>
+   <ItemType>String</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>CloseButton</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Frame</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Resizeable</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Frame</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MaximizeButton</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Frame</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MinimizeButton</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Frame</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>FullScreenButton</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Frame</PropertyGroup>
+   <PropertyValue>False</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Composite</ObjName>
+   <PropertyGroup>OS X (Carbon)</PropertyGroup>
+   <PropertyValue>False</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MacProcID</ObjName>
+   <PropertyGroup>OS X (Carbon)</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>ImplicitInstance</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Placement</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+   <EditorType>Enum</EditorType>
+   <Enumeration>
+    <ItemDef>0 - Default</ItemDef>
+    <ItemDef>1 - Parent Window</ItemDef>
+    <ItemDef>2 - Main Screen</ItemDef>
+    <ItemDef>3 - Parent Window Screen</ItemDef>
+    <ItemDef>4 - Stagger</ItemDef>
+   </Enumeration>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Visible</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>LiveResize</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>FullScreen</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>False</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>HasBackColor</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Background</PropertyGroup>
+   <PropertyValue>False</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>BackColor</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Background</PropertyGroup>
+   <PropertyValue>&amp;hFFFFFF</PropertyValue>
+   <ItemType>Color</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Backdrop</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Background</PropertyGroup>
+   <ItemType>Picture</ItemType>
+   <EditorType>Picture</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MenuBar</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Menus</PropertyGroup>
+   <ItemType>MenuBar</ItemType>
+   <EditorType>MenuBar</EditorType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>MenuBarVisible</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Deprecated</PropertyGroup>
+   <PropertyValue>True</PropertyValue>
+   <ItemType>Boolean</ItemType>
+   <EditorType>Boolean</EditorType>
+  </ViewProperty>
+ </ViewBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>ComboBox</Superclass>
+  <HookInstance>
+   <ItemName>Change</ItemName>
+   <Compatibility></Compatibility>
+   <Visible>1</Visible>
+   <ItemSource>
+    <TextEncoding>134217984</TextEncoding>
+    <SourceLine>Sub Change()</SourceLine>
+    <SourceLine>if me.getString = "Other" then</SourceLine>
+    <SourceLine>otherNode.Enabled =true</SourceLine>
+    <SourceLine>otherNode.SetFocus</SourceLine>
+    <SourceLine>else</SourceLine>
+    <SourceLine>otherNode.Enabled = false</SourceLine>
+    <SourceLine>end if</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>End Sub</SourceLine>
+   </ItemSource>
+  </HookInstance>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>TextField</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>TextField</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Separator</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>ComboBox</Superclass>
+  <HookInstance>
+   <ItemName>Change</ItemName>
+   <Compatibility></Compatibility>
+   <Visible>1</Visible>
+   <ItemSource>
+    <TextEncoding>134217984</TextEncoding>
+    <SourceLine>Sub Change()</SourceLine>
+    <SourceLine>if me.getString = "Other" then</SourceLine>
+    <SourceLine>otherWallet.Enabled =true</SourceLine>
+    <SourceLine>otherWallet.SetFocus</SourceLine>
+    <SourceLine>else</SourceLine>
+    <SourceLine>otherWallet.Enabled = false</SourceLine>
+    <SourceLine>end if</SourceLine>
+    <SourceLine></SourceLine>
+    <SourceLine>End Sub</SourceLine>
+   </ItemSource>
+  </HookInstance>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>TextField</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>Label</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>TextField</Superclass>
+ </ControlBehavior>
+ <ControlBehavior>
+  <Superclass>PushButton</Superclass>
+  <HookInstance>
+   <ItemName>Action</ItemName>
+   <Compatibility></Compatibility>
+   <Visible>1</Visible>
+   <ItemSource>
+    <TextEncoding>134217984</TextEncoding>
+    <SourceLine>Sub Action()</SourceLine>
+    <SourceLine>if nodelist.getString = "Other" then</SourceLine>
+    <SourceLine>App.aeond = str(otherNode.Text)</SourceLine>
+    <SourceLine>else</SourceLine>
+    <SourceLine>app.aeond = nodelist.getString</SourceLine>
+    <SourceLine>end if</SourceLine>
+    <SourceLine>app.aeondPort = nodelist.getString</SourceLine>
+    <SourceLine>if walletList.getString = "Other" then</SourceLine>
+    <SourceLine>app.wallet = str(otherWallet.Text)</SourceLine>
+    <SourceLine>else</SourceLine>
+    <SourceLine>app.wallet = walletList.getString</SourceLine>
+    <SourceLine>end if</SourceLine>
+    <SourceLine>dim wport as string = walletPort.Text</SourceLine>
+    <SourceLine>app.walletPort = wport</SourceLine>
+    <SourceLine>Window1.Show</SourceLine>
+    <SourceLine>Window1.refreshAllTask.Run</SourceLine>
+    <SourceLine>me.Close</SourceLine>
+    <SourceLine>End Sub</SourceLine>
+   </ItemSource>
+  </HookInstance>
+ </ControlBehavior>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="Name">Label1</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Left">20</PropertyVal>
+  <PropertyVal Name="Top">20</PropertyVal>
+  <PropertyVal Name="Width">100</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabIndex">0</PropertyVal>
+  <PropertyVal Name="Text">Starting Up...</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="TextSize">1.5e+1</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="Bold">True</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="InitialParent"></PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <ControlIndex>0</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="Name">Label2</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Left">20</PropertyVal>
+  <PropertyVal Name="Top">75</PropertyVal>
+  <PropertyVal Name="Width">100</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabIndex">1</PropertyVal>
+  <PropertyVal Name="Text">Daemon node:</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="TextSize">0.0</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="InitialParent"></PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <ControlIndex>1</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>ComboBox</ControlClass>
+  <ItemName>ComboBox</ItemName>
+  <PropertyVal Name="Name">nodelist</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Left">180</PropertyVal>
+  <PropertyVal Name="Top">74</PropertyVal>
+  <PropertyVal Name="Width">179</PropertyVal>
+  <PropertyVal Name="Height">22</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabIndex">2</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="InitialValue"><Hex bytes="84">6C6F63616C686F73740D0A6E6F64652E61656F6E2D77616C6C65742E6E65740D0A6E6F6465322E61656F6E2D77616C6C65742E6E65740D0A6E6F6465332E61656F6E2D77616C6C65742E6E65740D0A4F74686572</Hex></PropertyVal>
+  <PropertyVal Name="ListIndex">0</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="UseFocusRing">True</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="TextSize">0.0</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="AutoComplete">False</PropertyVal>
+  <PropertyVal Name="Super">ComboBox</PropertyVal>
+  <ControlIndex>2</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>TextField</ControlClass>
+  <ItemName>TextField</ItemName>
+  <PropertyVal Name="Name">otherNode</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Left">392</PropertyVal>
+  <PropertyVal Name="Top">74</PropertyVal>
+  <PropertyVal Name="Width">118</PropertyVal>
+  <PropertyVal Name="Height">22</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabIndex">3</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="Border">True</PropertyVal>
+  <PropertyVal Name="Password">False</PropertyVal>
+  <PropertyVal Name="UseFocusRing">True</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="BackColor">16777215</PropertyVal>
+  <PropertyVal Name="Enabled">False</PropertyVal>
+  <PropertyVal Name="Format"></PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="TextSize">0.0</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="CueText"></PropertyVal>
+  <PropertyVal Name="Text"></PropertyVal>
+  <PropertyVal Name="Mask"></PropertyVal>
+  <PropertyVal Name="ReadOnly">False</PropertyVal>
+  <PropertyVal Name="LimitText">0</PropertyVal>
+  <PropertyVal Name="AcceptTabs">False</PropertyVal>
+  <PropertyVal Name="Alignment">0</PropertyVal>
+  <PropertyVal Name="AutomaticallyCheckSpelling">False</PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="Super">TextField</PropertyVal>
+  <ControlIndex>3</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="Name">Label3</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Left">20</PropertyVal>
+  <PropertyVal Name="Top">107</PropertyVal>
+  <PropertyVal Name="Width">100</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabIndex">4</PropertyVal>
+  <PropertyVal Name="Text">Daemon Port:</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="HelpTag">If localhost or other</PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="TextSize">0.0</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="InitialParent"></PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <ControlIndex>4</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>TextField</ControlClass>
+  <ItemName>TextField</ItemName>
+  <PropertyVal Name="Name">nodePort</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Left">180</PropertyVal>
+  <PropertyVal Name="Top">106</PropertyVal>
+  <PropertyVal Name="Width">179</PropertyVal>
+  <PropertyVal Name="Height">22</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabIndex">5</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="Border">True</PropertyVal>
+  <PropertyVal Name="Password">False</PropertyVal>
+  <PropertyVal Name="UseFocusRing">True</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="BackColor">16777215</PropertyVal>
+  <PropertyVal Name="Enabled">False</PropertyVal>
+  <PropertyVal Name="Format"></PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="TextSize">0.0</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="CueText"></PropertyVal>
+  <PropertyVal Name="Text">11181</PropertyVal>
+  <PropertyVal Name="Mask"></PropertyVal>
+  <PropertyVal Name="ReadOnly">False</PropertyVal>
+  <PropertyVal Name="LimitText">0</PropertyVal>
+  <PropertyVal Name="AcceptTabs">False</PropertyVal>
+  <PropertyVal Name="Alignment">0</PropertyVal>
+  <PropertyVal Name="AutomaticallyCheckSpelling">False</PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="Super">TextField</PropertyVal>
+  <ControlIndex>5</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Separator</ControlClass>
+  <ItemName>Separator</ItemName>
+  <PropertyVal Name="Name">Separator1</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Left">20</PropertyVal>
+  <PropertyVal Name="Top">139</PropertyVal>
+  <PropertyVal Name="Width">490</PropertyVal>
+  <PropertyVal Name="Height">4</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabIndex">6</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="InitialParent"></PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Super">Separator</PropertyVal>
+  <ControlIndex>6</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="Name">Label4</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Left">20</PropertyVal>
+  <PropertyVal Name="Top">155</PropertyVal>
+  <PropertyVal Name="Width">100</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabIndex">7</PropertyVal>
+  <PropertyVal Name="Text">Wallet host:</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="TextSize">0.0</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="InitialParent"></PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <ControlIndex>7</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>ComboBox</ControlClass>
+  <ItemName>ComboBox</ItemName>
+  <PropertyVal Name="Name">walletList</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Left">180</PropertyVal>
+  <PropertyVal Name="Top">154</PropertyVal>
+  <PropertyVal Name="Width">179</PropertyVal>
+  <PropertyVal Name="Height">22</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabIndex">8</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="InitialValue"><Hex bytes="16">6C6F63616C686F73740D0A4F74686572</Hex></PropertyVal>
+  <PropertyVal Name="ListIndex">0</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="UseFocusRing">True</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="TextSize">0.0</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="AutoComplete">False</PropertyVal>
+  <PropertyVal Name="Super">ComboBox</PropertyVal>
+  <ControlIndex>8</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>TextField</ControlClass>
+  <ItemName>TextField</ItemName>
+  <PropertyVal Name="Name">otherWallet</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Left">392</PropertyVal>
+  <PropertyVal Name="Top">154</PropertyVal>
+  <PropertyVal Name="Width">118</PropertyVal>
+  <PropertyVal Name="Height">22</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabIndex">9</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="Border">True</PropertyVal>
+  <PropertyVal Name="Password">False</PropertyVal>
+  <PropertyVal Name="UseFocusRing">True</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="BackColor">16777215</PropertyVal>
+  <PropertyVal Name="Enabled">False</PropertyVal>
+  <PropertyVal Name="Format"></PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="TextSize">0.0</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="CueText"></PropertyVal>
+  <PropertyVal Name="Text"></PropertyVal>
+  <PropertyVal Name="Mask"></PropertyVal>
+  <PropertyVal Name="ReadOnly">False</PropertyVal>
+  <PropertyVal Name="LimitText">0</PropertyVal>
+  <PropertyVal Name="AcceptTabs">False</PropertyVal>
+  <PropertyVal Name="Alignment">0</PropertyVal>
+  <PropertyVal Name="AutomaticallyCheckSpelling">False</PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="Super">TextField</PropertyVal>
+  <ControlIndex>9</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>Label</ControlClass>
+  <ItemName>Label</ItemName>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="Name">Label5</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Left">20</PropertyVal>
+  <PropertyVal Name="Top">187</PropertyVal>
+  <PropertyVal Name="Width">100</PropertyVal>
+  <PropertyVal Name="Height">20</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabIndex">10</PropertyVal>
+  <PropertyVal Name="Text">Wallet Port:</PropertyVal>
+  <PropertyVal Name="TextAlign">0</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="Multiline">False</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="Selectable">False</PropertyVal>
+  <PropertyVal Name="Transparent">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="TextSize">0.0</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="InitialParent"></PropertyVal>
+  <PropertyVal Name="Super">Label</PropertyVal>
+  <ControlIndex>10</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>TextField</ControlClass>
+  <ItemName>TextField</ItemName>
+  <PropertyVal Name="Name">walletPort</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Left">180</PropertyVal>
+  <PropertyVal Name="Top">186</PropertyVal>
+  <PropertyVal Name="Width">179</PropertyVal>
+  <PropertyVal Name="Height">22</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabIndex">11</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="Border">True</PropertyVal>
+  <PropertyVal Name="Password">False</PropertyVal>
+  <PropertyVal Name="UseFocusRing">True</PropertyVal>
+  <PropertyVal Name="TextColor">0</PropertyVal>
+  <PropertyVal Name="BackColor">16777215</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Format"></PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="TextSize">0.0</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="CueText"></PropertyVal>
+  <PropertyVal Name="Text">11183</PropertyVal>
+  <PropertyVal Name="Mask"></PropertyVal>
+  <PropertyVal Name="ReadOnly">False</PropertyVal>
+  <PropertyVal Name="LimitText">0</PropertyVal>
+  <PropertyVal Name="AcceptTabs">False</PropertyVal>
+  <PropertyVal Name="Alignment">0</PropertyVal>
+  <PropertyVal Name="AutomaticallyCheckSpelling">False</PropertyVal>
+  <PropertyVal Name="DataSource"></PropertyVal>
+  <PropertyVal Name="DataField"></PropertyVal>
+  <PropertyVal Name="Super">TextField</PropertyVal>
+  <ControlIndex>11</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+ <Control>
+  <ControlClass>PushButton</ControlClass>
+  <ItemName>PushButton</ItemName>
+  <PropertyVal Name="Name">PushButton1</PropertyVal>
+  <PropertyVal Name="Index">-2147483648</PropertyVal>
+  <PropertyVal Name="Scope">0</PropertyVal>
+  <PropertyVal Name="Left">196</PropertyVal>
+  <PropertyVal Name="Top">267</PropertyVal>
+  <PropertyVal Name="Width">139</PropertyVal>
+  <PropertyVal Name="Height">22</PropertyVal>
+  <PropertyVal Name="LockLeft">True</PropertyVal>
+  <PropertyVal Name="LockTop">True</PropertyVal>
+  <PropertyVal Name="LockRight">False</PropertyVal>
+  <PropertyVal Name="LockBottom">False</PropertyVal>
+  <PropertyVal Name="TabPanelIndex">0</PropertyVal>
+  <PropertyVal Name="TabIndex">12</PropertyVal>
+  <PropertyVal Name="TabStop">True</PropertyVal>
+  <PropertyVal Name="Caption">Test &amp; Launch</PropertyVal>
+  <PropertyVal Name="Default">True</PropertyVal>
+  <PropertyVal Name="Cancel">False</PropertyVal>
+  <PropertyVal Name="Enabled">True</PropertyVal>
+  <PropertyVal Name="Visible">True</PropertyVal>
+  <PropertyVal Name="HelpTag"></PropertyVal>
+  <PropertyVal Name="AutoDeactivate">True</PropertyVal>
+  <PropertyVal Name="ButtonStyle">0</PropertyVal>
+  <PropertyVal Name="TextFont">System</PropertyVal>
+  <PropertyVal Name="TextSize">0.0</PropertyVal>
+  <PropertyVal Name="TextUnit">0</PropertyVal>
+  <PropertyVal Name="Bold">False</PropertyVal>
+  <PropertyVal Name="Italic">False</PropertyVal>
+  <PropertyVal Name="Underline">False</PropertyVal>
+  <PropertyVal Name="InitialParent"></PropertyVal>
+  <PropertyVal Name="Super">PushButton</PropertyVal>
+  <ControlIndex>12</ControlIndex>
+  <Locked>0</Locked>
+ </Control>
+</block>
+<block type="UIState" ID="0">
+ <StudioWindowState>
+  <EditBounds><Rect left="0" top="0" width="1920" height="1080"/></EditBounds>
+  <WindowMaximized>0</WindowMaximized>
+  <Editors>
+   <EditorCount>1</EditorCount>
+   <Editor>
+    <EditorIndex>0</EditorIndex>
+    <EditorLocation>Window1</EditorLocation>
+    <EditorPath></EditorPath>
+    <EditingPartID>1310900223</EditingPartID>
+    <EditorPath></EditorPath>
+   </Editor>
+   <SelectedTab>0</SelectedTab>
+  </Editors>
+ </StudioWindowState>
+</block>
+</RBProject>
